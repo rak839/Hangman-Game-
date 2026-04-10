@@ -1,23 +1,108 @@
 import random
 
+def display_hangman(wrong_guesses):
+    stages = [
+        """
+           -----
+           |   |
+               |
+               |
+               |
+               |
+        =========
+        """,
+        """
+           -----
+           |   |
+           O   |
+               |
+               |
+               |
+        =========
+        """,
+        """
+           -----
+           |   |
+           O   |
+           |   |
+               |
+               |
+        =========
+        """,
+        """
+           -----
+           |   |
+           O   |
+          /|   |
+               |
+               |
+        =========
+        """,
+        """
+           -----
+           |   |
+           O   |
+          /|\\  |
+               |
+               |
+        =========
+        """,
+        """
+           -----
+           |   |
+           O   |
+          /|\\  |
+          /    |
+               |
+        =========
+        """,
+        """
+           -----
+           |   |
+           O   |
+          /|\\  |
+          / \\  |
+               |
+        =========
+        """
+    ]
+    return stages[wrong_guesses]
+
+
 def hangman():
-    words = ["python", "project", "hangman", "computer", "science"]
-    word = random.choice(words)
+    words = {
+        "python": "A popular programming language",
+        "project": "Work done to achieve a goal",
+        "hangman": "This game itself",
+        "computer": "An electronic machine",
+        "science": "Study of the natural world"
+    }
+
+    word = random.choice(list(words.keys()))
+    hint = words[word]
+
     guessed = ["_"] * len(word)
-    attempts = 6
     used = set()
 
-    while attempts > 0 and "_" in guessed:
+    wrong_guesses = 0
+    max_wrong = 6
+
+    # 👇 print once at start
+    print(display_hangman(wrong_guesses))
+
+    while wrong_guesses < max_wrong and "_" in guessed:
+        print("💡 Hint:", hint)
         print("Word:", " ".join(guessed))
-        print("Attempts left:", attempts)
+        print("Wrong attempts:", wrong_guesses, "/", max_wrong)
+
         guess = input("Enter a letter: ").lower()
 
         if not guess.isalpha() or len(guess) != 1:
-            print("Invalid input")
+            print("Invalid input\n")
             continue
 
         if guess in used:
-            print("Already used")
+            print("Already used\n")
             continue
 
         used.add(guess)
@@ -26,15 +111,19 @@ def hangman():
             for i in range(len(word)):
                 if word[i] == guess:
                     guessed[i] = guess
-            print("Correct")
-        else:
-            attempts -= 1
-            print("Wrong")
+            print("✅ Correct\n")
 
+        else:
+            wrong_guesses += 1
+            print("❌ Wrong")
+            print(display_hangman(wrong_guesses))  # 👈 ONLY print when wrong
+
+    # 👇 final result (NO extra hangman print here)
     if "_" not in guessed:
-        print("You win! Word is:", word)
+        print("🎉 You win! Word is:", word)
     else:
-        print("You lose! Word was:", word)
+        print("😢 You lose! Word was:", word)
+
 
 if __name__ == "__main__":
     hangman()
